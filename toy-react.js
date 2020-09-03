@@ -3,10 +3,10 @@ class ElementWrapper {
         this.root = document.createElement(type);
     }
     setAttribute(name,value){
-         this.root.setAttribute(name,value);
+         this.root.setAttribute(name, value);
     }
     appendChild(component){
-         this.root.appendChild(component,root);
+         this.root.appendChild(component.root);
     }
 }
 
@@ -20,40 +20,40 @@ class TextWrapper {
 export class Component {
     constructor(){
         this.props = Object.create(null);
-        this.childrend = [];
+        this.children = [];
         this._root = null;
     }
     setAttribute(name,value){
          this.props[name] = value;
     }
     appendChild(component){
-        this.childrend.push(component);
+        this.children.push(component);
     }
     get root(){
         if(!this._root){
-            this._root = this.render().root
+            this._root = this.render().root;
         }
         return this._root;
     }
 }
 
-export function createElement(type, attributes,...children){
+export function createElement(type, attributes, ...children){
    let e;
-   if(typeof type === "string"){
+   if(typeof type === 'string'){
       e = new ElementWrapper(type);
    }else {
        e = new type;
    }
    
    for(let p in attributes){
-     e.setAttribute(p,attributes[p]);
+     e.setAttribute(p, attributes[p]);
    }
    let insertChildren = (children) => {
        for(let child of children) {
-            if(typeof child === "string"){
+            if(typeof child === 'string'){
                 child = new TextWrapper(child);
             }
-            if((typeof child === "object") && (child instanceof Array)){
+            if(typeof child === "object" && child instanceof Array){
                  insertChildren(child);
             }else {
                 e.appendChild(child);
@@ -63,9 +63,10 @@ export function createElement(type, attributes,...children){
    }
 
    insertChildren(children);
-   return 0;
+
+   return e;
 
 }
-export function render(component, parentElement) {
+export function render(component,  parentElement) {
     parentElement.appendChild(component.root)
 }
